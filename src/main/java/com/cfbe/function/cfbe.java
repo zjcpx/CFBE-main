@@ -53,17 +53,24 @@ public class cfbe {
          System.out.println("请输入月度汇总文件的路径："); 
          String summaryDir = sc.nextLine();
          //  /Users/Mike/Desktop/CS/sj/01monthly summary.xls
+         
+         
+         //C:\Users\zjcpx\Desktop\CS\sj
          //  /Users/Mike/Desktop/CS/sj/01monthly summary.xls
          System.out.println("请输入商检文件的路径："); 
          String sJDir = sc.nextLine();
+         //处理输入路径最后的的“/”问题
          String separatorChar = File.separator;
          if (sJDir.endsWith(separatorChar)) {
 			sJDir = sJDir.substring(0,sJDir.lastIndexOf(separatorChar));
 		}
          
-         //获取商检文件夹中的所有文件：fileList
-         File[] fileList = getFileList(sJDir);
-
+         //获取商检文件夹中的所有文件：files
+         List<File> files = getFiles(sJDir);
+         //查看检索到的文件 
+         for(int i = 0,len = files.size(); i < len; i++) {
+        	 System.out.println(files.get(i));
+         }
          System.out.println("请输入结果存放的路径："); 
          String resultDir = sc.nextLine(); 
      //  /Users/Mike/Desktop/CS/sj/
@@ -86,7 +93,7 @@ public class cfbe {
 				//根据指定的路径生成结果文件夹
 
 				File file = new File(resultDir+File.separator+"result"+File.separator+iKEANo+ File.separator);
-				
+				//根据Excel中的内容创建目录
 				if(!file.exists()) {
 					System.out.println(file.mkdirs());
 				}
@@ -209,5 +216,21 @@ public class cfbe {
 			}
 		}
 	
-
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static List<File> getFiles(String path) {
+		List<File> fileList = new ArrayList<File>();
+		File root = new File(path);
+		File[] files = root.listFiles();
+		for (File file : files) {
+			if(file.isDirectory()) {
+				getFiles(file.getAbsolutePath());
+			}
+			fileList.add(file);
+		}
+		return fileList;
+	}
 }
